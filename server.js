@@ -6,7 +6,25 @@ const port = 3000;
 
 
 
-app.use(express.static('public'));
+const rootDirectoryPath = path.join(__dirname);
+
+app.use(express.static(rootDirectoryPath));
+
+app.get('/images', (req, res) => {
+  fs.readdir(rootDirectoryPath, (error, files) => {
+    if (error) {
+      console.error(error);
+      res.sendStatus(500);
+    }
+
+    const imageFiles = files.filter(file => file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png'));
+    let html = '';
+    imageFiles.forEach(file => {
+      html += `<img src="/${file}" alt="${file}">`;
+    });
+    res.send(html);
+  });
+});
 
 
 

@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'asBuilt-node-with-MapboxCode'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_8E92FEA79473426DBFB574BC86A20549 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_783522BC698A4F9C94F980E2CD7A1C86 }}
           package: .

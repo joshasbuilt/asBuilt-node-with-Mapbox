@@ -16,7 +16,7 @@ app.get('/images', (req, res) => {
       console.error(error);
       res.sendStatus(500);
     }
-
+    
     const imageFiles = files.filter(file => file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png'));
     let html = '';
     imageFiles.forEach(file => {
@@ -27,8 +27,8 @@ app.get('/images', (req, res) => {
 });
 
 
-
 app.get('/', (req, res) => {
+  res.set('X-Frame-Options', 'allow-from *');
   res.sendFile(__dirname + '/index.html');
 });
 

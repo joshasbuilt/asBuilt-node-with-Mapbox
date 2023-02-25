@@ -123,6 +123,8 @@ app.get('/', (req, res) => {
       redirectUri: "https://neom-show-legend-app-dev.azurewebsites.net/.auth/login/aad/callback",
   };
 
+  console.log("\nRequest: \n", authCodeUrlParameters);
+
   clientApplication.getAuthCodeUrl(authCodeUrlParameters).then((response) => {
       res.redirect(response);
   }).catch((error) => console.log(JSON.stringify(error)));
@@ -135,13 +137,14 @@ app.get('/.auth/login/aad/callback', (req, res) => {
       // The URL from the redirect will contain the Auth Code in the query parameters
       code: req.query.code,
       scopes: ["user.read"],
-      redirectUri: "https://neom-show-legend-app-dev.azurewebsites.net/.auth/login/aad/callback",
+      redirectUri: "https://neom-show-legend-app-dev.azurewebsites.net/.auth/login/aad/callback"
   };
 
   // Pass the tokenRequest object with the Auth Code, scopes and redirectUri to acquireTokenByCode API
   clientApplication.acquireTokenByCode(tokenRequest).then((response) => {
       console.log("\nResponse: \n:", response);
       res.sendStatus(200);
+       res.send(html);
   }).catch((error) => {
       console.log(error);
       res.status(500).send(error);
@@ -149,15 +152,8 @@ app.get('/.auth/login/aad/callback', (req, res) => {
 });
 
 
-
-app.get('/helloworld', (req, res) => {
+app.get('/hello', (req, res) => {
   // res.setHeader('Content-Security-Policy', "default-src *");
   res.sendFile(__dirname + '/index.html');
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
-
-
- 

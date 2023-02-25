@@ -8,20 +8,39 @@ const rootDirectoryPath = path.join(__dirname);
 
 const passport = require('passport');
 const OIDCStrategy = require('passport-azure-ad').OIDCStrategy;
+const msal = require('@azure/msal-node');
 
+const config = {
+  auth: {
+      clientId: "f0b08376-6d02-45d9-af3a-3020a70e1c35",
+      authority: "https://login.microsoftonline.com/common",
+      clientSecret: "51c0a154-38dc-475e-9f1f-f68724cb296b" // Only for Confidential Client Applications
+  },
+  system: {
+      loggerOptions: {
+          loggerCallback(loglevel, message, containsPii) {
+              console.log(message);
+          },
+          piiLoggingEnabled: false,
+          logLevel: msal.LogLevel.Verbose,
+      }
+  }
+};
 
-passport.use(new OIDCStrategy({
-  identityMetadata: 'https://login.microsoftonline.com/f0b08376-6d02-45d9-af3a-3020a70e1c35/v2.0/.well-known/openid-configuration',
-  clientID: 'd623ebfa-820c-49ad-93d6-882c814a087f',
-  clientSecret: '51c0a154-38dc-475e-9f1f-f68724cb296b',
-  responseType: 'code',
-  responseMode: 'form_post',
-  redirectUrl: 'https://neom-show-legend-app-dev.azurewebsites.net/.auth/login/aad/callback',
-  scope: ['openid', 'profile'],
-  passReqToCallback: false
-}, (iss, sub, profile, accessToken, refreshToken, done) => {
-  return done(null, profile);
-}));
+const cca = new msal.ConfidentialClientApplication(config);
+
+// passport.use(new OIDCStrategy({
+//   identityMetadata: 'https://login.microsoftonline.com/f0b08376-6d02-45d9-af3a-3020a70e1c35/v2.0/.well-known/openid-configuration',
+//   clientID: 'd623ebfa-820c-49ad-93d6-882c814a087f',
+//   clientSecret: '51c0a154-38dc-475e-9f1f-f68724cb296b',
+//   responseType: 'code',
+//   responseMode: 'form_post',
+//   redirectUrl: 'https://neom-show-legend-app-dev.azurewebsites.net/.auth/login/aad/callback',
+//   scope: ['openid', 'profile'],
+//   passReqToCallback: false
+// }, (iss, sub, profile, accessToken, refreshToken, done) => {
+//   return done(null, profile);
+// }));
 
 
 // passport.use(new OIDCStrategy({
@@ -40,13 +59,14 @@ passport.use(new OIDCStrategy({
 // }));
 
 //app.get('/auth', passport.authenticate('azuread-openidconnect', { failureRedirect: '/' }));
-app.use(passport.initialize());
+// app.use(passport.initialize());
 
-app.get('/login', passport.authenticate('azuread-openidconnect'));
+// app.get('/login', passport.authenticate('azuread-openidconnect'));
 
-app.get('/.auth/login/aad/callback', passport.authenticate('azuread-openidconnect', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect('/');
-});
+// app.get('/.auth/login/aad/callback', passport.authenticate('azuread-openidconnect', { failureRedirect: '/login' }), (req, res) => {
+//   console.log(`this i sworking at line 48 in server.js`);
+//   res.redirect('/');
+// });
 
 app.use(express.static(rootDirectoryPath));
 //app.use(frameguard({ action: 'allow-from', domain: 'https://neom.asbuiltvault.com' }));
@@ -96,8 +116,41 @@ app.get('/images', (req, res) => {
 });
 
 
-
 app.get('/', (req, res) => {
+  // You can also build the authCodeUrlParameters object directly in the JavaScript file like this
+  const authCodeUrlParameters = {
+      scopes: ["user.read"],
+      redirectUri: "https://neom-show-legend-app-dev.azurewebsites.net/.auth/login/aad/callback",
+  };
+
+  clientApplication.getAuthCodeUrl(authCodeUrlParameters).then((response) => {
+      res.redirect(response);
+  }).catch((error) => console.log(JSON.stringify(error)));
+});
+
+
+app.get('/.auth/login/aad/callback', (req, res) => {
+  // You can also build the tokenRequest object directly in the JavaScript file like this
+  const tokenRequest = {
+      // The URL from the redirect will contain the Auth Code in the query parameters
+      code: req.query.code,
+      scopes: ["user.read"],
+      redirectUri: "https://neom-show-legend-app-dev.azurewebsites.net/.auth/login/aad/callback",
+  };
+
+  // Pass the tokenRequest object with the Auth Code, scopes and redirectUri to acquireTokenByCode API
+  clientApplication.acquireTokenByCode(tokenRequest).then((response) => {
+      console.log("\nResponse: \n:", response);
+      res.sendStatus(200);
+  }).catch((error) => {
+      console.log(error);
+      res.status(500).send(error);
+  });
+});
+
+
+
+app.get('/helloworld', (req, res) => {
   // res.setHeader('Content-Security-Policy', "default-src *");
   res.sendFile(__dirname + '/index.html');
 });

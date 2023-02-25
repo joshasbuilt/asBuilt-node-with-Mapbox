@@ -91,34 +91,34 @@
     });
 //https://api.mapbox.com/styles/v1/abmaps-dev/cle3rgz7t000201mty6jvqj8c.html?access_token=pk.eyJ1IjoiYWJtYXBzLWRldiIsImEiOiJjbDk3bjI3MHMyYThlM3V0Z3V5eWI2amd2In0.eyqq2QwPabE-g-nZddHBvA&zoomwheel=true&fresh=true#20.21/28.1297882/34.9666199
 
-    map.on('click', function (e) {
-      var features = map.queryRenderedFeatures(e.point, { layers: ['pile fill ALL'] });
-      if (features.length) {
-        var feature = features[0];
-        var popup = new mapboxgl.Popup({ offset: [0, -15] })
-          .setLngLat(e.lngLat)
-          .setHTML(`
-      <h3>Additional Pile Info:</h3>
-      <p><strong>NEW Pile No:</strong> ${feature.properties["NEW Pile No"]}</p>
-      <p><strong>Pile Actual Depth (m):</strong> ${feature.properties["Pile Actual Depth (m)"]}</p>
-      <p><strong>CUT OFF LEVEL (m):</strong> ${feature.properties["CUT OFF LEVEL (m)"]}</p>
-      <p><strong>BOTTOM OF PILE (m):</strong> ${feature.properties["BOTTOM OF PILE (m)"]}</p>
-      <p><strong>Piling Rig No.:</strong> ${feature.properties["Piling Rig No."]}</p>
-      <p><strong>Working Order No.:</strong> ${feature.properties["Working Order No."]}</p>
-    `)
-          .addTo(map);
-      }
-    });
+    // map.on('click', function (e) {
+    //   var features = map.queryRenderedFeatures(e.point, { layers: ['pile fill ALL'] });
+    //   if (features.length) {
+    //     var feature = features[0];
+    //     var popup = new mapboxgl.Popup({ offset: [0, -15] })
+    //       .setLngLat(e.lngLat)
+    //       .setHTML(`
+    //   <h3>Additional Pile Info:</h3>
+    //   <p><strong>NEW Pile No:</strong> ${feature.properties["NEW Pile No"]}</p>
+    //   <p><strong>Pile Actual Depth (m):</strong> ${feature.properties["Pile Actual Depth (m)"]}</p>
+    //   <p><strong>CUT OFF LEVEL (m):</strong> ${feature.properties["CUT OFF LEVEL (m)"]}</p>
+    //   <p><strong>BOTTOM OF PILE (m):</strong> ${feature.properties["BOTTOM OF PILE (m)"]}</p>
+    //   <p><strong>Piling Rig No.:</strong> ${feature.properties["Piling Rig No."]}</p>
+    //   <p><strong>Working Order No.:</strong> ${feature.properties["Working Order No."]}</p>
+    // `)
+    //       .addTo(map);
+    //   }
+    // });
 
 
-    map.on('mousemove', function (e) {
-      var features = map.queryRenderedFeatures(e.point, { layers: ['pile fill ALL'] });
-      if (features.length) {
-        map.getCanvas().style.cursor = 'pointer';
-      } else {
-        map.getCanvas().style.cursor = '';
-      }
-    });
+    // map.on('mousemove', function (e) {
+    //   var features = map.queryRenderedFeatures(e.point, { layers: ['pile fill ALL'] });
+    //   if (features.length) {
+    //     map.getCanvas().style.cursor = 'pointer';
+    //   } else {
+    //     map.getCanvas().style.cursor = '';
+    //   }
+    // });
 
   </script>
 </body>

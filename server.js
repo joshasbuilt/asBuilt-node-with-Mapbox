@@ -10,6 +10,11 @@ const rootDirectoryPath = path.join(__dirname);
 
 app.use(express.static(rootDirectoryPath));
 
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', "default-src *");
+  next();
+});
+
 app.get('/images', (req, res) => {
   fs.readdir(rootDirectoryPath, (error, files) => {
     if (error) {

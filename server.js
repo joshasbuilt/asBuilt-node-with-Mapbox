@@ -22,12 +22,14 @@ app.get('/images', (req, res) => {
     imageFiles.forEach(file => {
       html += `<img src="/${file}" alt="${file}">`;
     });
+    res.set('X-Frame-Options', 'allow-from *');
     res.send(html);
   });
 });
 
 
 app.get('/', (req, res) => {
+  res.locals.frameOptions = 'allow-from *';
   res.set('X-Frame-Options', 'allow-from *');
   res.sendFile(__dirname + '/index.html');
 });

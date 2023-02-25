@@ -54,6 +54,28 @@ app.get('/images', (req, res) => {
   });
 });
 
+app.get('/microsoft-login', (req, res) => {
+  const microsoftLoginUrl = 'https://login.microsoftonline.com/';
+  const html = `
+    <html>
+      <head>
+        <title>Microsoft Login</title>
+      </head>
+      <body>
+        <script>
+          const microsoftWindow = window.open('${microsoftLoginUrl}', '_blank');
+          const timerId = setInterval(() => {
+            if (microsoftWindow.closed) {
+              clearInterval(timerId);
+              window.close();
+            }
+          }, 1000);
+        </script>
+      </body>
+    </html>
+  `;
+  res.send(html);
+});
 
 app.get('/', (req, res) => {
   // res.setHeader('Content-Security-Policy', "default-src *");

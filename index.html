@@ -5,6 +5,7 @@
   <meta charset='utf-8' />
   <title>Mapbox GL JS Example</title>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <meta http-equiv="X-Frame-Options" content="<%= frameOptions %>">
   <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.js'></script>
   <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.css' rel='stylesheet' />
   <style>
@@ -18,7 +19,6 @@
       border-radius: 10px;
       z-index: 100;
     }
-
 
     body {
       margin: 0;
@@ -51,7 +51,7 @@
   left: 50%;
     transform: translateX(-50%);
     cursor: pointer;">
-    Show Legend
+    Show Legend.
   </button>  
 
 <!-- The legend popup container -->

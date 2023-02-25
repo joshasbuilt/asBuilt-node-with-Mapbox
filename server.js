@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const helmet = require('helmet');
 const app = express();
 const port = 3000;
 
@@ -10,10 +11,25 @@ const rootDirectoryPath = path.join(__dirname);
 
 app.use(express.static(rootDirectoryPath));
 
-app.use((req, res, next) => {
-  res.setHeader('Content-Security-Policy', "default-src *");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader('Content-Security-Policy', "default-src *");
+//   next();
+// });
+
+// app.use(helmet({
+//   frameguard: {
+//     action: 'allow-from',
+//     domain: 'https://neom.asbuiltvault.com' // Replace this with the domain you want to allow if you're using 'allow-from' option
+//   }
+// }));
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      frameAncestors: ["'self'", "https://neom.asbuiltvault.com"]
+    }
+  }
+}));
 
 app.get('/images', (req, res) => {
   fs.readdir(rootDirectoryPath, (error, files) => {
@@ -33,7 +49,7 @@ app.get('/images', (req, res) => {
 
 
 app.get('/', (req, res) => {
-  res.setHeader('Content-Security-Policy', "default-src *");
+  // res.setHeader('Content-Security-Policy', "default-src *");
   res.sendFile(__dirname + '/index.html');
 });
 

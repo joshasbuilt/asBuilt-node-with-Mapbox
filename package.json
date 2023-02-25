@@ -9,7 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "helmet": "^6.0.1"
   },
   "devDependencies": {
     "mocha": "^10.2.0",

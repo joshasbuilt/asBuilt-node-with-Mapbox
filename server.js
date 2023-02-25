@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const helmet = require('helmet');
+//const frameguard = require('frameguard');
 const app = express();
 const port = 3000;
 
@@ -10,11 +10,18 @@ const port = 3000;
 const rootDirectoryPath = path.join(__dirname);
 
 app.use(express.static(rootDirectoryPath));
-
+//app.use(frameguard({ action: 'allow-from', domain: 'https://neom.asbuiltvault.com' }));
 // app.use((req, res, next) => {
 //   res.setHeader('Content-Security-Policy', "default-src *");
 //   next();
 // });
+
+
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://neom.asbuiltvault.com");
+  res.setHeader('X-Frame-Options', 'https://neom.asbuiltvault.com');
+  next();
+});
 
 // app.use(helmet({
 //   frameguard: {
@@ -23,13 +30,13 @@ app.use(express.static(rootDirectoryPath));
 //   }
 // }));
 
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      frameAncestors: ["'self'", "https://neom.asbuiltvault.com"]
-    }
-  }
-}));
+// app.use(helmet({
+//   contentSecurityPolicy: {
+//     directives: {
+//       frameAncestors: ["'self'", "https://neom.asbuiltvault.com"]
+//     }
+//   }
+// }));
 
 app.get('/images', (req, res) => {
   fs.readdir(rootDirectoryPath, (error, files) => {

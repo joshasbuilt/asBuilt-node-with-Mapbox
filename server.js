@@ -6,14 +6,12 @@ const port = 3000;
 const rootDirectoryPath = path.join(__dirname);
 
 
-const passport = require('passport');
-const OIDCStrategy = require('passport-azure-ad').OIDCStrategy;
 const msal = require('@azure/msal-node');
 
 const config = {
   auth: {
       clientId: "f0b08376-6d02-45d9-af3a-3020a70e1c35",
-      authority: "https://login.microsoftonline.com/common",
+      authority: "https://login.microsoftonline.com/f0b08376-6d02-45d9-af3a-3020a70e1c35/",
       clientSecret: "51c0a154-38dc-475e-9f1f-f68724cb296b" // Only for Confidential Client Applications
   },
   system: {
@@ -157,3 +155,6 @@ app.get('/hello', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+app.listen(port, () => {
+  console.log("Server is running on port " + port);
+});

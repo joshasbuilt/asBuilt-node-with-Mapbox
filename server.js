@@ -54,7 +54,7 @@ const cca = new msal.ConfidentialClientApplication(config);
 // Middleware function to authenticate the user
 const authMiddleware = async (req, res, next) => {
     const tokenRequest = {
-        scopes: ['https://graph.microsoft.com/.default']
+        scopes: ['https://neom-show-legend-app-dev.azurewebsites.net/user_impersonation']
     };
 
     try {

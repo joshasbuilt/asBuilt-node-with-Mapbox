@@ -1,0 +1,6 @@
+{
+    "redirectUris": [
+      "https://oauth.pstmn.io/v1/browser-callback"
+    ]
+  }
+  

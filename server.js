@@ -47,9 +47,10 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res, next) => {
-    // authenticate the user using the Azure AD strategy
-    passport.authenticate('azuread-openidconnect', { prompt: 'login' })(req, res, next);
+  // authenticate the user using the Azure AD strategy in a popup window
+  passport.authenticate('azuread-openidconnect', { prompt: 'login', display: 'popup' })(req, res, next);
 });
+
 
 app.get('/logout', (req, res) => {
     // log out the user and redirect to the home page

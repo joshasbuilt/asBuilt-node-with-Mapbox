@@ -1,96 +1,83 @@
+// Import the required MSAL.js library and Node.js modules
+const msal = require('@azure/msal-node');
 const express = require('express');
-const passport = require('passport');
-const OIDCStrategy = require('passport-azure-ad').OIDCStrategy;
-const session = require('express-session');
-const cookieParser = require('cookie-parser');
+const path = require('path');
 
-const app = express();
-const port = process.env.PORT || 3000;
+// Set up the MSAL.js configuration object
+const msalConfig = {
+  auth: {
+    clientId: 'd623ebfa-820c-49ad-93d6-882c814a087f',
+    authority: 'https://login.microsoftonline.com/f0b08376-6d02-45d9-af3a-3020a70e1c35',
+    clientSecret: '51c0a154-38dc-475e-9f1f-f68724cb296b',
+    redirectUri: 'https://neom-show-legend-app-dev.azurewebsites.net/.auth/login/aad/callback'
 
-const clientID = 'd623ebfa-820c-49ad-93d6-882c814a087f';
-const clientSecret = '51c0a154-38dc-475e-9f1f-f68724cb296b';
-const tenantID = 'f0b08376-6d02-45d9-af3a-3020a70e1c35';
-const redirectURI = 'https://neom-show-legend-app-dev.azurewebsites.net/.auth/login/aad/callback';
-const scope = 'https://graph.microsoft.com/.default';
-
-// configure session middleware
-app.use(session({
-  secret: 'secret-key',
-  resave: false,
-  saveUninitialized: false
-}));
-
-// configure passport middleware
-passport.use(new OIDCStrategy({
-  identityMetadata: `https://login.microsoftonline.com/${tenantID}/.well-known/openid-configuration`,
-  clientID: clientID,
-  responseType: 'code id_token',
-  responseMode: 'form_post',
-  redirectUrl: redirectURI,
-  allowHttpForRedirectUrl: true,
-  clientSecret: clientSecret,
-  validateIssuer: true,
-  passReqToCallback: false,
-  scope: scope
-},
-function(iss, sub, profile, accessToken, refreshToken, done) {
-  // this function is called after the user has successfully authenticated with Azure AD
-  // you can add any additional logic here
-  return done(null, profile);
-}));
-
-// initialize Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
-
-// configure cookie parser middleware
-app.use(cookieParser());
-
-// define routes
-app.get('/', (req, res) => {
-  // check if the user is authenticated
-  if (req.isAuthenticated()) {
-    // if the user is authenticated, display a welcome message with the user's display name
-    res.send(`Welcome, ${req.user._json.displayName}!`);
-  } else {
-    // if the user is not authenticated, redirect to the login page
-    res.redirect('/login');
-  }
-});
-
-app.get('/login', passport.authenticate('azuread-openidconnect', { prompt: 'login', display: 'popup' }));
-
-app.get('/logout', (req, res) => {
-  // log out the user and redirect to the home page
-  req.logout();
-  res.redirect('/');
-});
-
-app.post('/.auth/login/aad/callback',
-  passport.authenticate('azuread-openidconnect', { failureRedirect: '/', failureFlash: true }),
-  (req, res) => {
-    // redirect to the home page after successful authentication
-    res.redirect('/');
-  }
-);
-
-// define a middleware to check if the user is authenticated
-const ensureAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    // if the user is authenticated, call the next middleware
-    return next();
-  }
-
-  // if the user is not authenticated, redirect to the login page
-  res.redirect('/login');
+  },
 };
 
-app.get('/profile', ensureAuthenticated, (req, res) => {
-  // display the user's profile information
-  res.send(`Hello, ${req.user._json.displayName}! Your email address is ${req.user._json.email}.`);
+// Define the desired scope
+const scope = 'https://graph.microsoft.com/.default';
+
+// Create an instance of the MSAL.js client
+const msalClient = new msal.ConfidentialClientApplication(msalConfig);
+
+// Define an Express.js middleware function to handle authentication
+async function authMiddleware(req, res, next) {
+  try {
+    // Get the access token from the request headers
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      // If there is no access token, redirect the user to sign in
+      const authUrl = await msalClient.getAuthCodeUrl({
+        scopes: [scope],
+      });
+      res.redirect(authUrl);
+      return;
+    }
+
+    // Get the bearer token from the access token in the request headers
+    const accessToken = authHeader.split(' ')[1];
+
+    // Attach the access token to the request object for use in later middleware functions
+    req.accessToken = accessToken;
+
+    // Call the next middleware function
+    next();
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(401);
+  }
+}
+
+// Define an Express.js middleware function to serve the index page
+function indexMiddleware(req, res) {
+  res.sendFile(path.join(__dirname, 'index.html'));
+}
+
+// Create an instance of the Express.js app
+const app = express();
+
+// Add the middleware functions to the app
+app.use(authMiddleware);
+app.get('/', (req, res) => {
+  // Use the access token to make a request to the Microsoft Graph API
+  const options = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${req.accessToken}`,
+    },
+    url: 'https://graph.microsoft.com/v1.0/me',
+  };
+  request(options, (error, response, body) => {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+      return;
+    }
+    res.send(body);
+  });
 });
 
-// start the server
-app.listen(port, () => {
-  console.log(`Server running on port${port}.`);
+// Start the server
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
 });

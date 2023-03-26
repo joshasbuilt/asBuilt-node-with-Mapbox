@@ -57,34 +57,24 @@ function indexMiddleware(req, res) {
 const app = express();
 
 // Add the middleware functions to the app
-// app.use(authMiddleware);
-app.get('/index', function(req, res) {
-  res.send(__dirname + '/index.html');
-});
-
+app.use(authMiddleware);
 app.get('/', (req, res) => {
- 
-  res.sendFile(__dirname + '/index.html');
-
-
-  
-
   // Use the access token to make a request to the Microsoft Graph API
-  // const options = {
-  //   method: 'GET',
-  //   headers: {
-  //     Authorization: `Bearer ${req.accessToken}`,
-  //   },
-  //   url: 'https://graph.microsoft.com/v1.0/me',
-  // };
-  // request(options, (error, response, body) => {
-  //   if (error) {
-  //     console.log(error);
-  //     res.sendStatus(500);
-  //     return;
-  //   }
-  //   res.send(body);
-  // });
+  const options = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${req.accessToken}`,
+    },
+    url: 'https://graph.microsoft.com/v1.0/me',
+  };
+  request(options, (error, response, body) => {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+      return;
+    }
+    res.send(body);
+  });
 });
 
 // Start the server

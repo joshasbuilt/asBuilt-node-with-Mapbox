@@ -19,7 +19,7 @@ const app = express();
 // Add the middleware functions to the app
 // app.use(authMiddleware);
 app.get('/index', function(req, res) {
-  res.send(__dirname + '/index.html');
+  res.send(__dirname + '/index2.html');  //<-- this is the path to the file that actually works
 });
 
 app.get('/', (req, res) => {

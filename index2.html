@@ -63,6 +63,22 @@ const map = new mapboxgl.Compare(beforeMap, afterMap, container, {
 // mousemove: true
 });
 
+afterMap.on('load', () => {
+    // Hide a layer with the ID 'layerID'
+    const layerID = 'schedule booking';
+    afterMap.setLayoutProperty(layerID, 'visibility', 'none');
+
+});
+
+afterMap.on('load', () => {
+    // Hide a layer with the ID 'layerID'
+
+    const layerID2= 'LUP Text schedule booking';
+    afterMap.setLayoutProperty(layerID2, 'visibility', 'none');
+});
+
+
+//afterMap.setLayoutProperty('schedule booking', 'visibility', 'none');
 
 afterMap.on('click', function (e) {
       var features = afterMap.queryRenderedFeatures(e.point, { layers: ['schedule booking'] });

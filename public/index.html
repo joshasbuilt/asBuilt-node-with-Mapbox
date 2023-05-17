@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8' />
+  <title>Mapbox GL JS Example</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.css' rel='stylesheet' />
+  <style>
+    #legend-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      z-index: 100;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id='map'></div>
+
+  <button id="legend-button" style="
+    position: absolute;
+    z-index: 2;
+    padding: 12px 30px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 18px;
+    border-radius: 20px;
+    border: none;
+    top: 10px;
+  left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;">
+    Show Legend2
+  </button>  
+
+<!-- The legend popup container -->
+<!-- The legend popup container -->
+<div id="legend-popup" style="display:none;">
+  <!-- The legend content -->
+  <div style="font-size:24px; font-family:Arial, sans-serif;">
+        <img src="QC Legend.png" >
+  </div>
+  <!-- Close button for the popup -->
+  <button id="close-button" style="font-size:24px;">Close</button>
+</div>
+
+  <script>
+
+
+    // Get the button and the popup
+    var legendButton = document.getElementById("legend-button");
+    var legendPopup = document.getElementById("legend-popup");
+    var closeButton = document.getElementById("close-button");
+
+    // Show the popup when the button is clicked
+    legendButton.addEventListener("click", function () {
+      legendPopup.style.display = "block";
+    });
+
+    // Hide the popup when the close button is clicked
+    closeButton.addEventListener("click", function () {
+      legendPopup.style.display = "none";
+    });
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYWJtYXBzLWRldiIsImEiOiJjbDk3bjI3MHMyYThlM3V0Z3V5eWI2amd2In0.eyqq2QwPabE-g-nZddHBvA';
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/abmaps-dev/cle3rgz7t000201mty6jvqj8c',
+      center: [0, 0],
+      zoom: 0
+    });
+//https://api.mapbox.com/styles/v1/abmaps-dev/cle3rgz7t000201mty6jvqj8c.html?access_token=pk.eyJ1IjoiYWJtYXBzLWRldiIsImEiOiJjbDk3bjI3MHMyYThlM3V0Z3V5eWI2amd2In0.eyqq2QwPabE-g-nZddHBvA&zoomwheel=true&fresh=true#20.21/28.1297882/34.9666199
+
+    // map.on('click', function (e) {
+    //   var features = map.queryRenderedFeatures(e.point, { layers: ['pile fill ALL'] });
+    //   if (features.length) {
+    //     var feature = features[0];
+    //     var popup = new mapboxgl.Popup({ offset: [0, -15] })
+    //       .setLngLat(e.lngLat)
+    //       .setHTML(`
+    //   <h3>Additional Pile Info:</h3>
+    //   <p><strong>NEW Pile No:</strong> ${feature.properties["NEW Pile No"]}</p>
+    //   <p><strong>Pile Actual Depth (m):</strong> ${feature.properties["Pile Actual Depth (m)"]}</p>
+    //   <p><strong>CUT OFF LEVEL (m):</strong> ${feature.properties["CUT OFF LEVEL (m)"]}</p>
+    //   <p><strong>BOTTOM OF PILE (m):</strong> ${feature.properties["BOTTOM OF PILE (m)"]}</p>
+    //   <p><strong>Piling Rig No.:</strong> ${feature.properties["Piling Rig No."]}</p>
+    //   <p><strong>Working Order No.:</strong> ${feature.properties["Working Order No."]}</p>
+    // `)
+    //       .addTo(map);
+    //   }
+    // });
+
+
+    // map.on('mousemove', function (e) {
+    //   var features = map.queryRenderedFeatures(e.point, { layers: ['pile fill ALL'] });
+    //   if (features.length) {
+    //     map.getCanvas().style.cursor = 'pointer';
+    //   } else {
+    //     map.getCanvas().style.cursor = '';
+    //   }
+    // });
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Swipe between maps</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.14.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.14.0/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<style>
+body {
+overflow: hidden;
+}
+ 
+body * {
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+ 
+.map {
+position: absolute;
+top: 0;
+bottom: 0;
+width: 100%;
+}
+</style>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.css" type="text/css">
+<div id="comparison-container">
+<div id="before" class="map"></div>
+<div id="after" class="map"></div>
+</div>
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiYWJtYXBzLWRldiIsImEiOiJjbDk3bjI3MHMyYThlM3V0Z3V5eWI2amd2In0.eyqq2QwPabE-g-nZddHBvA';
+const beforeMap = new mapboxgl.Map({
+container: 'before',
+// Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+style: 'mapbox://styles/abmaps-dev/clcs8qht3000214qtk0v5tl81',
+center: [0, 0],
+zoom: 0
+});
+ 
+const afterMap = new mapboxgl.Map({
+container: 'after',
+style: 'mapbox://styles/abmaps-dev/clghy3bq4000801kvxc4f84w1',
+center: [0, 0],
+zoom: 0
+});
+ 
+// A selector or reference to HTML element
+const container = '#comparison-container';
+ 
+const map = new mapboxgl.Compare(beforeMap, afterMap, container, {
+// Set this to enable comparing two maps by mouse movement:
+// mousemove: true
+});
+
+afterMap.on('load', () => {
+    // Hide a layer with the ID 'layerID'
+    const layerID = 'schedule booking';
+    afterMap.setLayoutProperty(layerID, 'visibility', 'none');
+
+});
+
+afterMap.on('load', () => {
+    // Hide a layer with the ID 'layerID'
+
+    const layerID2= 'LUP Text schedule booking';
+    afterMap.setLayoutProperty(layerID2, 'visibility', 'none');
+});
+
+
+//afterMap.setLayoutProperty('schedule booking', 'visibility', 'none');
+
+afterMap.on('click', function (e) {
+      var features = afterMap.queryRenderedFeatures(e.point, { layers: ['schedule booking'] });
+      if (features.length) {
+        var feature = features[0];
+        var popup = new mapboxgl.Popup({ offset: [0, -15] })
+          .setLngLat(e.lngLat)
+          .setHTML(`
+      <h3>LUP Time Management:</h3>
+      <p>${feature.properties["ScheduleBooking"]}</p>
+	  <p><strong>FROM: 15 May 2023</strong> </p>
+	  <p><strong>TO: 20 Sep 2023</strong> </p>
+	  <button>Show LUP Calendar</button>
+    `)
+          .addTo(afterMap);
+      }
+    });
+
+
+    afterMap.on('mousemove', function (e) {
+      var features = afterMap.queryRenderedFeatures(e.point, { layers: ['schedule booking'] });
+      if (features.length) {
+        afterMap.getCanvas().style.cursor = 'pointer';
+      } else {
+        afterMap.getCanvas().style.cursor = '';
+      }
+    });
+
+</script>
+ 
+</body>
+</html>

@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 
 app.get('/legend', (req, res) => {
  //ff
-  res.sendFile(__dirname + '/index.html');
+ res.sendFile(path.join(__dirname, 'public', 'index.html'));
 
 });
 
